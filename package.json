@@ -9,7 +9,8 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
-    "export:seamly": "node --experimental-strip-types scripts/export-seamly.ts"
+    "export:seamly": "node --experimental-strip-types scripts/export-seamly.ts",
+    "seed:demo": "node --experimental-strip-types scripts/seed-demo.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
