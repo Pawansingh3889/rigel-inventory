@@ -1,0 +1,326 @@
+import React, { useState } from 'react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { 
+  Edit, 
+  Trash2, 
+  ChevronDown, 
+  ChevronRight,
+  Search,
+  Package,
+  AlertTriangle,
+  CheckCircle
+} from 'lucide-react';
+
+interface Product {
+  id: string;
+  name: string;
+  sku: string;
+  category?: string;
+  stock_quantity: number;
+  unit_price: number;
+  cost_price?: number;
+  reorder_point?: number;
+  is_active: boolean;
+  created_at: string;
+}
+
+interface InventoryTableMobileProps {
+  products: Product[];
+  onEdit: (product: Product) => void;
+  onDelete: (productId: string) => void;
+  loading?: boolean;
+}
+
+export function InventoryTableMobile({
+  products,
+  onEdit,
+  onDelete,
+  loading = false
+}: InventoryTableMobileProps) {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
+  
+  const itemsPerPage = 10;
+
+  // Filter products based on search term
+  const filteredProducts = products.filter(product =>
+    (product.name?.toLowerCase() ?? '').includes(searchTerm.toLowerCase()) ||
+    (product.sku?.toLowerCase() ?? '').includes(searchTerm.toLowerCase()) ||
+    (product.category?.toLowerCase() ?? '').includes(searchTerm.toLowerCase())
+  );
+
+  // Pagination
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentProducts = filteredProducts.slice(startIndex, startIndex + itemsPerPage);
+
+  const toggleCard = (productId: string) => {
+    const newExpanded = new Set(expandedCards);
+    if (newExpanded.has(productId)) {
+      newExpanded.delete(productId);
+    } else {
+      newExpanded.add(productId);
+    }
+    setExpandedCards(newExpanded);
+  };
+
+  const getStockStatus = (product: Product) => {
+    if (!product.is_active) {
+      return { status: 'inactive', color: 'bg-muted text-muted-foreground', label: 'Inactive' };
+    }
+    
+    if (product.stock_quantity === 0) {
+      return { status: 'out_of_stock', color: 'bg-destructive/10 text-destructive', label: 'Out of Stock' };
+    }
+    
+    if (product.reorder_point && product.stock_quantity <= product.reorder_point) {
+      return { status: 'low_stock', color: 'bg-warning/10 text-warning', label: 'Low Stock' };
+    }
+    
+    return { status: 'in_stock', color: 'bg-success/10 text-success', label: 'In Stock' };
+  };
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+    }).format(amount);
+  };
+
+  if (loading) {
+    return (
+      <div className="space-y-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <Card key={i} className="animate-pulse">
+            <CardContent className="p-4">
+              <div className="space-y-3">
+                <div className="flex justify-between items-start">
+                  <div className="space-y-2">
+                    <div className="h-4 bg-muted rounded w-32"></div>
+                    <div className="h-3 bg-muted rounded w-20"></div>
+                  </div>
+                  <div className="h-6 bg-muted rounded w-16"></div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <div className="h-3 bg-muted rounded w-16"></div>
+                    <div className="h-4 bg-muted rounded w-12"></div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="h-3 bg-muted rounded w-16"></div>
+                    <div className="h-4 bg-muted rounded w-20"></div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* Search */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="Search products..."
+          value={searchTerm}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setCurrentPage(1);
+          }}
+          className="pl-10"
+        />
+      </div>
+
+      {/* Results Info */}
+      <div className="flex justify-between items-center text-sm text-muted-foreground px-1">
+        <span>{currentProducts.length} of {filteredProducts.length} products</span>
+        {totalPages > 1 && (
+          <span>Page {currentPage} of {totalPages}</span>
+        )}
+      </div>
+
+      {/* Products List */}
+      <div className="space-y-3">
+        {currentProducts.length === 0 ? (
+          <Card>
+            <CardContent className="p-6 text-center">
+              <div className="text-muted-foreground">
+                {searchTerm ? 'No products found matching your search.' : 'No products found.'}
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          currentProducts.map((product) => {
+            const isExpanded = expandedCards.has(product.id);
+            const stockStatus = getStockStatus(product);
+            
+            return (
+              <Card key={product.id} className="card-interactive">
+                <Collapsible>
+                  <CollapsibleTrigger
+                    onClick={() => toggleCard(product.id)}
+                    className="w-full"
+                  >
+                    <CardHeader className="pb-3">
+                      <div className="mobile-card-header">
+                        <div className="flex items-start gap-3 text-left flex-1 min-w-0">
+                          <div className="p-2 rounded-lg bg-primary/10 text-primary flex-shrink-0">
+                            <Package className="h-4 w-4" />
+                          </div>
+                          <div className="mobile-card-content">
+                            <div className="mobile-card-title">
+                              {product.name}
+                            </div>
+                            <div className="mobile-card-subtitle">
+                              SKU: {product.sku}
+                            </div>
+                            {product.category && (
+                              <div className="text-xs text-muted-foreground truncate">
+                                {product.category}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <Badge className={stockStatus.color}>
+                            {stockStatus.label}
+                          </Badge>
+                          {isExpanded ? (
+                            <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                          ) : (
+                            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4 text-sm mt-3">
+                        <div className="space-y-1">
+                          <div className="text-muted-foreground text-xs">Stock</div>
+                          <div className="font-medium flex items-center gap-1">
+                            {product.stock_quantity > 0 ? (
+                              <CheckCircle className="h-3 w-3 text-success" />
+                            ) : (
+                              <AlertTriangle className="h-3 w-3 text-destructive" />
+                            )}
+                            {product.stock_quantity} units
+                          </div>
+                        </div>
+                        <div className="space-y-1">
+                          <div className="text-muted-foreground text-xs">Unit Price</div>
+                          <div className="font-medium">
+                            {formatCurrency(product.unit_price)}
+                          </div>
+                        </div>
+                      </div>
+                    </CardHeader>
+                  </CollapsibleTrigger>
+
+                  <CollapsibleContent>
+                    <CardContent className="pt-0">
+                      <div className="space-y-3 mb-4">
+                        {product.cost_price && (
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground text-sm">Cost Price:</span>
+                            <span className="text-sm">{formatCurrency(product.cost_price)}</span>
+                          </div>
+                        )}
+                        {product.reorder_point && (
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground text-sm">Reorder Point:</span>
+                            <span className="text-sm">{product.reorder_point} units</span>
+                          </div>
+                        )}
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground text-sm">Status:</span>
+                          <span className="text-sm">{product.is_active ? 'Active' : 'Inactive'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground text-sm">Created:</span>
+                          <span className="text-sm">{new Date(product.created_at).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onEdit(product);
+                          }}
+                          className="flex-1"
+                        >
+                          <Edit className="h-4 w-4 mr-1" />
+                          Edit
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (confirm('Are you sure you want to delete this product?')) {
+                              onDelete(product.id);
+                            }
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </CollapsibleContent>
+                </Collapsible>
+              </Card>
+            );
+          })
+        )}
+      </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center gap-2 pt-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </Button>
+          <div className="flex items-center gap-1">
+            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+              const pageNumber = Math.max(1, Math.min(totalPages - 4, currentPage - 2)) + i;
+              return (
+                <Button
+                  key={pageNumber}
+                  variant={currentPage === pageNumber ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setCurrentPage(pageNumber)}
+                  className="min-w-[40px]"
+                >
+                  {pageNumber}
+                </Button>
+              );
+            })}
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}

@@ -1,0 +1,16 @@
+project_id = "rkqgxrwnvyccxumiwfip"
+
+[functions.send-email-confirmation]
+verify_jwt = false
+
+[functions.verify-email-confirmation]
+verify_jwt = false
+
+[functions.gemini-business-assistant]
+verify_jwt = false
+
+[functions.invite-business-user]
+verify_jwt = false
+
+[functions.signin]
+verify_jwt = false
