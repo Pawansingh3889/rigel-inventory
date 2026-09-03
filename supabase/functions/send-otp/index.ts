@@ -121,15 +121,28 @@ serve(async (req) => {
         `,
       });
 
+      // The Resend SDK reports API failures in the response body rather than throwing,
+      // so a rejected send lands here, not in the catch below.
+      if (emailResult.error) {
+        console.error("Email delivery rejected:", emailResult.error);
+        return new Response(
+          JSON.stringify({ error: "Could not send the verification code. Please try again or contact support." }),
+          { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
       console.log("Email sent successfully:", emailResult);
     } catch (emailError) {
       console.error("Email sending error:", emailError);
-      // Still return success as OTP is stored, user can try again
+      return new Response(
+        JSON.stringify({ error: "Could not send the verification code. Please try again or contact support." }),
+        { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
+      JSON.stringify({
+        success: true,
         message: "OTP sent successfully. Please check your email.",
         expiresIn: 180 // 3 minutes in seconds
       }),
