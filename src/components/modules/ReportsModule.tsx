@@ -6,6 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useBusinessAuth } from '@/hooks/useBusinessAuth';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
 import { BarChart3, TrendingUp, Package, DollarSign } from 'lucide-react';
+import { TableSkeleton, StatsSkeleton } from '@/components/ui/loading-skeleton';
 
 interface DashboardStats {
   totalProducts: number;
@@ -114,8 +115,9 @@ export function ReportsModule() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-48">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className="space-y-6">
+        <StatsSkeleton />
+        <TableSkeleton rows={5} columns={5} />
       </div>
     );
   }

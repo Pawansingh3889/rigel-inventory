@@ -16,6 +16,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { useBusinessAuth } from '@/hooks/useBusinessAuth';
 import { Plus, Search, Edit, Trash2, Play, CheckCircle, XCircle, AlertTriangle, Package, Factory } from 'lucide-react';
+import { EmptyState } from '@/components/ui/empty-state';
 
 interface Product {
   id: string;
@@ -721,11 +722,11 @@ export function BOMModule() {
                     </div>
                   ))}
                   {boms.filter(bom => bom.production_ready).length === 0 && (
-                    <div className="text-center py-8">
-                      <Package className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                      <p className="text-muted-foreground">No BOMs marked as production ready</p>
-                      <p className="text-sm text-muted-foreground">Create BOMs and mark them as production ready to run production</p>
-                    </div>
+                    <EmptyState
+                      icon={Package}
+                      title="No BOMs marked as production ready"
+                      description="Create a BOM and mark it production ready to run production."
+                    />
                   )}
                 </div>
               </div>

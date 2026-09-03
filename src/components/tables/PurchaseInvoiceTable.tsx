@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { TableSkeleton } from '@/components/ui/loading-skeleton';
 
 interface PurchaseInvoice {
   id: string;
@@ -146,11 +147,8 @@ export function PurchaseInvoiceTable({
   if (loading) {
     return (
       <Card>
-        <CardContent className="flex items-center justify-center py-12">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading purchase invoices...</p>
-          </div>
+        <CardContent className="p-0">
+          <TableSkeleton rows={5} columns={7} />
         </CardContent>
       </Card>
     );

@@ -18,6 +18,8 @@ import { PaymentHistoryDialog } from '@/components/dialogs/PaymentHistoryDialog'
 import { GRNDetailsDialog } from '@/components/dialogs/GRNDetailsDialog';
 import { SalesInvoiceDetailsDialog } from '@/components/dialogs/SalesInvoiceDetailsDialog';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
+import { TableSkeleton, StatsSkeleton } from '@/components/ui/loading-skeleton';
+import { EmptyState } from '@/components/ui/empty-state';
 
 interface Payment {
   id: string;
@@ -575,8 +577,9 @@ export function PaymentsModule() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-48">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className="space-y-6">
+        <StatsSkeleton />
+        <TableSkeleton rows={5} columns={6} />
       </div>
     );
   }
@@ -1091,9 +1094,11 @@ export function PaymentsModule() {
           </CardHeader>
           <CardContent>
             {overdueVendors.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">No overdue vendor payments found</p>
-              </div>
+              <EmptyState
+                icon={TrendingDown}
+                title="No overdue vendor payments"
+                description="Vendor bills past their due date will appear here."
+              />
             ) : (
               <div className="space-y-3">
                 {overdueVendors.map((vendor, index) => (
@@ -1127,9 +1132,11 @@ export function PaymentsModule() {
           </CardHeader>
           <CardContent>
             {overdueCustomers.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">No overdue customer payments found</p>
-              </div>
+              <EmptyState
+                icon={TrendingUp}
+                title="No overdue customer payments"
+                description="Customer invoices past their due date will appear here."
+              />
             ) : (
               <div className="space-y-3">
                 {overdueCustomers.map((customer, index) => (

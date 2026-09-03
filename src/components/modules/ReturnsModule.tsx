@@ -1452,9 +1452,11 @@ export function ReturnsModule() {
               </Table>
 
               {creditNotes.length === 0 && (
-                <div className="text-center py-8">
-                  <p className="text-muted-foreground">No credit notes found</p>
-                </div>
+                <EmptyState
+                  icon={FileText}
+                  title="No credit notes"
+                  description="Credit notes raised against returns will appear here."
+                />
               )}
             </CardContent>
           </Card>

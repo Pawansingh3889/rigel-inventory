@@ -27,6 +27,7 @@ import {
   Activity,
   Plus,
   RotateCcw,
+  Loader2
 } from 'lucide-react';
 import { InventoryModule } from '@/components/modules/InventoryModule';
 import { PurchaseModule } from '@/components/modules/PurchaseModule';
@@ -100,8 +101,9 @@ export default function Dashboard() {
   if (loading) {
     console.log('Dashboard loading...');
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className="min-h-screen flex items-center justify-center" role="status" aria-live="polite">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" aria-hidden="true" />
+        <span className="sr-only">Loading your workspace</span>
       </div>
     );
   }

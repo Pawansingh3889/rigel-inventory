@@ -28,6 +28,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { WarehouseBinTableMobile } from './WarehouseBinTableMobile';
 import { WarehouseBinForm } from '@/components/forms/WarehouseBinForm';
 import * as XLSX from 'xlsx';
+import { TableSkeleton } from '@/components/ui/loading-skeleton';
 
 interface WarehouseBin {
   id: string;
@@ -375,9 +376,7 @@ export const WarehouseBinTable: React.FC<WarehouseBinTableProps> = ({ refreshTri
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-48">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
+      <TableSkeleton rows={5} columns={6} />
     );
   }
 

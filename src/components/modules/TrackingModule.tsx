@@ -6,6 +6,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { useBusinessAuth } from '@/hooks/useBusinessAuth';
 import { Search, MapPin, Truck, Package, CheckCircle } from 'lucide-react';
+import { TableSkeleton, StatsSkeleton } from '@/components/ui/loading-skeleton';
+import { EmptyState } from '@/components/ui/empty-state';
 
 interface TrackableOrder {
   id: string;
@@ -170,8 +172,9 @@ export function TrackingModule() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-48">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className="space-y-6">
+        <StatsSkeleton />
+        <TableSkeleton rows={5} columns={6} />
       </div>
     );
   }
@@ -314,10 +317,12 @@ export function TrackingModule() {
         
         {filteredOrders.length === 0 && (
           <Card>
-            <CardContent className="text-center py-8">
-              <MapPin className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-muted-foreground">No orders to track</h3>
-              <p className="text-sm text-muted-foreground">Orders will appear here once they're confirmed or shipped</p>
+            <CardContent className="p-0">
+              <EmptyState
+                icon={MapPin}
+                title="No orders to track"
+                description="Orders will appear here once they are confirmed or shipped."
+              />
             </CardContent>
           </Card>
         )}

@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Eye, Edit, Trash2, Search, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useBusinessAuth } from '@/hooks/useBusinessAuth';
+import { TableSkeleton } from '@/components/ui/loading-skeleton';
 
 interface Supplier {
   id: string;
@@ -83,10 +84,8 @@ export const SupplierTable: React.FC<SupplierTableProps> = ({
   if (loading) {
     return (
       <Card>
-        <CardContent className="p-6">
-          <div className="flex items-center justify-center h-48">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-          </div>
+        <CardContent className="p-0">
+          <TableSkeleton rows={5} columns={6} />
         </CardContent>
       </Card>
     );
