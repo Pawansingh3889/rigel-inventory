@@ -102,14 +102,14 @@ serve(async (req) => {
           console.log('Token verification failed, continuing unauthenticated:', requesterErr?.message);
         } else {
           requesterId = requesterData.user.id;
-          const { data: requesterProfile, error: profileFetchErr } = await admin
-            .from('profiles')
-            .select('role, company_id')
+          const { data: requesterAccess, error: profileFetchErr } = await admin
+            .from('company_users')
+            .select('access_type, company_id')
             .eq('user_id', requesterId)
             .maybeSingle();
           if (profileFetchErr) {
-            console.log('Profile fetch error, continuing unauthenticated:', profileFetchErr.message);
-          } else if (!requesterProfile || !['owner','admin'].includes(requesterProfile.role) || requesterProfile.company_id !== company_id) {
+            console.log('Access lookup error, continuing unauthenticated:', profileFetchErr.message);
+          } else if (!requesterAccess || requesterAccess.access_type !== 'OWNER' || requesterAccess.company_id !== company_id) {
             console.log('Requester lacks permissions; proceeding because auth is optional.');
           } else {
             console.log('Requester verified as admin/owner for company.');
@@ -276,7 +276,6 @@ serve(async (req) => {
       company_id,
       first_name,
       last_name,
-      role: mapRoleToProfile(normalizedRole),
       is_active: true,
     }, { onConflict: 'user_id' });
 

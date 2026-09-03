@@ -275,12 +275,11 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: createErr.message || 'Failed to create auth user' }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    // Ensure profile is linked with secure role assignment
+    // Ensure profile is linked to the company. Role lives in company_users.access_type, not profiles.
     console.log(`Upserting secure profile for user: ${userData.email}`);
     await supabase.from('profiles').upsert({
       user_id: authUserId!,
       company_id: userData.company_id,
-      role: mapRoleToProfile(userData.access_type),
       is_active: true,
     }, { onConflict: 'user_id' });
 
