@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { emailSchema, passwordSchema, nameSchema, phoneSchema, otpSchema, checkRateLimit, logSecurityEvent, SecuritySeverity } from '@/lib/security';
+import { emailSchema, passwordSchema, nameSchema, phoneSchema, otpSchema, checkRateLimit, hashEmail, logSecurityEvent, SecuritySeverity } from '@/lib/security';
 
 interface Profile {
   id: string;
@@ -224,7 +224,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           await supabase
             .from('auth_rate_limits')
             .delete()
-            .eq('email', normalizedEmail);
+            .eq('hashed_email', await hashEmail(normalizedEmail));
         } catch (e) {
           console.warn('Failed to reset rate limit after successful login', e);
         }

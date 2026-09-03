@@ -19,7 +19,7 @@ export type Database = {
           attempt_count: number
           blocked_until: string | null
           created_at: string
-          email: string | null
+          hashed_email: string | null
           id: string
           ip_address: unknown
           last_attempt: string
@@ -28,7 +28,7 @@ export type Database = {
           attempt_count?: number
           blocked_until?: string | null
           created_at?: string
-          email?: string | null
+          hashed_email?: string | null
           id?: string
           ip_address: unknown
           last_attempt?: string
@@ -37,7 +37,7 @@ export type Database = {
           attempt_count?: number
           blocked_until?: string | null
           created_at?: string
-          email?: string | null
+          hashed_email?: string | null
           id?: string
           ip_address?: unknown
           last_attempt?: string

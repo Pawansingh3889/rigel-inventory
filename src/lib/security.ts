@@ -90,6 +90,16 @@ export const sanitizeCss = (css: string): string => {
   return sanitized;
 };
 
+// The auth_rate_limits table stores a digest of the address, not the address itself.
+// Same scheme as hashOTP/hashPassword in the edge functions: SHA-256, lowercase hex.
+export const hashEmail = async (email: string): Promise<string> => {
+  const data = new TextEncoder().encode(email);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hashBuffer))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+};
+
 // Enhanced rate limiting helper with better security
 export const checkRateLimit = async (
   supabase: any,
@@ -106,11 +116,12 @@ export const checkRateLimit = async (
     }
 
     const windowStart = new Date(Date.now() - windowMinutes * 60 * 1000);
-    
+    const hashedIdentifier = await hashEmail(normalizedIdentifier);
+
     const { data, error } = await supabase
       .from('auth_rate_limits')
       .select('*')
-      .eq('email', normalizedIdentifier)
+      .eq('hashed_email', hashedIdentifier)
       .gte('last_attempt', windowStart.toISOString())
       .single();
 
@@ -125,7 +136,7 @@ export const checkRateLimit = async (
         await supabase
           .from('auth_rate_limits')
           .insert({
-            email: normalizedIdentifier,
+            hashed_email: hashedIdentifier,
             attempt_count: 1,
             last_attempt: new Date().toISOString(),
             ip_address: '127.0.0.1' // In production, get real IP
