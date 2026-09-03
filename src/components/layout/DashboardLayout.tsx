@@ -32,11 +32,11 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   onNavigate = () => {},
   className,
 }) => {
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
   const { businessUser } = useBusinessAuth();
   const isMobile = useIsMobile();
   const emailToShow = user?.email || businessUser?.email || '';
-  const roleLabel = (businessUser?.access_type === 'ADMIN' || businessUser?.access_type === 'OWNER' || profile?.role === 'admin' || profile?.role === 'owner') ? 'Admin' : 'User';
+  const roleLabel = (businessUser?.access_type === 'ADMIN' || businessUser?.access_type === 'OWNER') ? 'Admin' : 'User';
   
   const MobileMenu = () => (
     <Sheet>

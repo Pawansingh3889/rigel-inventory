@@ -244,8 +244,7 @@ export function CompanyProfile({ readonly = false }: CompanyProfileProps) {
               phone: userData.phone,
               city: userData.city,
               state: userData.state,
-              country: userData.country,
-              role: 'owner'
+              country: userData.country
             });
 
           if (profileError) throw profileError;

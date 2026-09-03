@@ -10,6 +10,7 @@ import { Loader2, Filter, Download, Clock, User, Database } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useBusinessAuth } from '@/hooks/useBusinessAuth';
 import { format } from 'date-fns';
 
 interface AuditLog {
@@ -30,7 +31,8 @@ interface AuditLogViewerProps {
 }
 
 export const AuditLogViewer: React.FC<AuditLogViewerProps> = ({ className }) => {
-  const { company, profile } = useAuth();
+  const { company } = useAuth();
+  const { isOwnerOrAdmin, businessUser } = useBusinessAuth();
   const { toast } = useToast();
   const [logs, setLogs] = useState<AuditLog[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -60,10 +62,10 @@ export const AuditLogViewer: React.FC<AuditLogViewerProps> = ({ className }) => 
   };
 
   useEffect(() => {
-    if (company?.id && (profile?.role === 'owner' || profile?.role === 'admin')) {
+    if (company?.id && isOwnerOrAdmin()) {
       fetchAuditLogs();
     }
-  }, [company?.id, profile?.role]);
+  }, [company?.id, businessUser?.access_type]);
 
   const fetchAuditLogs = async () => {
     try {
@@ -150,7 +152,7 @@ export const AuditLogViewer: React.FC<AuditLogViewerProps> = ({ className }) => 
     window.URL.revokeObjectURL(url);
   };
 
-  if (profile?.role !== 'owner' && profile?.role !== 'admin') {
+  if (!isOwnerOrAdmin()) {
     return (
       <Card className="max-w-md mx-auto">
         <CardHeader className="text-center">

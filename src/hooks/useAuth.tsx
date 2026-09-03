@@ -10,7 +10,6 @@ interface Profile {
   company_id: string;
   first_name: string | null;
   last_name: string | null;
-  role: 'owner' | 'admin' | 'manager' | 'staff';
   phone: string | null;
   city: string | null;
   state: string | null;
@@ -434,8 +433,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             phone: userData.phone,
             city: userData.city,
             state: userData.state,
-            country: userData.country,
-            role: 'owner'
+            country: userData.country
           });
 
         if (profileError) {

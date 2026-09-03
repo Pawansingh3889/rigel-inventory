@@ -16,7 +16,7 @@ interface SectionPermissions {
 }
 
 export const useBusinessAuth = () => {
-  const { user, company, profile } = useAuth();
+  const { user, company } = useAuth();
   const [businessUser, setBusinessUser] = useState<BusinessUser | null>(null);
   const [sectionPermissions, setSectionPermissions] = useState<SectionPermissions>({});
   const [loading, setLoading] = useState(true);
@@ -74,14 +74,9 @@ export const useBusinessAuth = () => {
 
   // Consolidated role checking to prevent privilege escalation
   const getEffectiveRole = (): 'OWNER' | 'ADMIN' | 'MANAGER' | 'USER' => {
-    // Primary source: profile.role (from Supabase auth system)
-    if (profile?.role === 'owner') return 'OWNER';
-    if (profile?.role === 'admin') return 'ADMIN';
-    if (profile?.role === 'manager') return 'MANAGER';
-    
-    // Fallback: businessUser.access_type (company-specific roles)
-    // Only use if profile role is not set to prevent conflicts
-    if (!profile?.role && businessUser?.access_type) {
+    // Role lives in company_users.access_type. The profiles table has no
+    // role column, so that is the only source.
+    if (businessUser?.access_type) {
       return businessUser.access_type;
     }
     
