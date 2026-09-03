@@ -79,21 +79,27 @@ const Signin = () => {
       if (error) throw error;
 
       if (data?.success) {
-        // Store session data
+        // The edge function only provisions the auth user; the session itself has to be
+        // established here so useAuth (and every guarded route) sees a signed-in user.
+        const { error: sessionError } = await supabase.auth.signInWithPassword({
+          email: data.user.email,
+          password: formData.password
+        });
+
+        if (sessionError) throw sessionError;
+
         localStorage.setItem('gatedBusinessSession', JSON.stringify({
-          sessionToken: data.sessionToken,
           user: data.user,
-          business: data.business,
+          business: data.company,
           loginTime: Date.now()
         }));
 
         toast({
           title: "Sign In Successful!",
-          description: `Welcome back, ${data.user.username}!`
+          description: `Welcome back, ${data.user.email}!`
         });
 
-        // Redirect to main app
-        navigate('/app');
+        navigate('/dashboard');
       } else {
         throw new Error(data?.error || 'Sign in failed');
       }
