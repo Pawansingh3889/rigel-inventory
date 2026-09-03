@@ -24,6 +24,7 @@ import { InventoryTransactionTable } from '@/components/tables/InventoryTransact
 import { CurrentStockTable } from '@/components/tables/CurrentStockTable';
 import { BOMModule } from '@/components/modules/BOMModule';
 import * as XLSX from 'xlsx';
+import { TableSkeleton, StatsSkeleton } from '@/components/ui/loading-skeleton';
 
 interface Product {
   id: string;
@@ -827,8 +828,9 @@ export function InventoryModule() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      <div className="space-y-6 p-6">
+        <StatsSkeleton />
+        <TableSkeleton rows={6} columns={6} />
       </div>
     );
   }

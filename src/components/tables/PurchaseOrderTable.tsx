@@ -26,6 +26,7 @@ import {
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import { PurchaseOrderTableMobile } from './PurchaseOrderTableMobile';
+import { TableSkeleton } from '@/components/ui/loading-skeleton';
 
 interface PurchaseOrder {
   id: string;
@@ -464,10 +465,8 @@ export function PurchaseOrderTable({
   if (loading) {
     return (
       <Card>
-        <CardContent className="p-6">
-          <div className="flex items-center justify-center h-32">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-          </div>
+        <CardContent className="p-0">
+          <TableSkeleton rows={5} columns={7} />
         </CardContent>
       </Card>
     );

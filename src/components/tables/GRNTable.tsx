@@ -12,6 +12,7 @@ import { Eye, Edit, Trash2, Download, FileSpreadsheet, ArrowUpDown, ChevronLeft,
 import { format } from 'date-fns';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
+import { TableSkeleton } from '@/components/ui/loading-skeleton';
 
 interface GRN {
   id: string;
@@ -450,11 +451,8 @@ export function GRNTable({ refreshTrigger, onView, onEdit, onDelete }: GRNTableP
   if (loading) {
     return (
       <Card>
-        <CardContent className="flex justify-center items-center h-64">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-2 text-muted-foreground">Loading GRNs...</p>
-          </div>
+        <CardContent className="p-0">
+          <TableSkeleton rows={5} columns={7} />
         </CardContent>
       </Card>
     );

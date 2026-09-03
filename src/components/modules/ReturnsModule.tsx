@@ -39,6 +39,8 @@ import {
   Loader2,
   RefreshCw
 } from 'lucide-react';
+import { TableSkeleton } from '@/components/ui/loading-skeleton';
+import { EmptyState } from '@/components/ui/empty-state';
 
 interface ReturnOrder {
   id: string;
@@ -1070,13 +1072,13 @@ export function ReturnsModule() {
               </CardHeader>
               <CardContent>
                 {loading ? (
-                  <div className="flex justify-center items-center py-8">
-                    <Loader2 className="h-8 w-8 animate-spin" />
-                  </div>
+                  <TableSkeleton rows={5} columns={6} />
                 ) : returnOrders.length === 0 ? (
-                  <div className="text-center py-8">
-                    <p className="text-muted-foreground">No return sales orders found.</p>
-                  </div>
+                  <EmptyState
+                    icon={RotateCcw}
+                    title="No return sales orders"
+                    description="Returns raised against a sales order will appear here."
+                  />
                 ) : (
                   <div className="overflow-x-auto">
                     <Table>
