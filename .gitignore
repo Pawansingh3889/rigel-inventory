@@ -34,3 +34,9 @@ supabase/.temp/
 
 # Local snapshot of live data - never commit (contains real business + auth data)
 .local-dump/
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
