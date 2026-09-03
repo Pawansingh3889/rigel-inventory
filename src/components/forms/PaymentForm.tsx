@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import type { TablesInsert } from "@/integrations/supabase/types";
 
 interface PaymentFormProps {
   mode: 'create' | 'edit';
@@ -167,7 +168,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
         return;
       }
 
-      const paymentData = {
+      const paymentData: TablesInsert<'payments'> = {
         amount,
         payment_method: formData.payment_method,
         payment_date: formData.payment_date,
