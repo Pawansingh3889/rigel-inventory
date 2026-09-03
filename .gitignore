@@ -31,3 +31,6 @@ dist-ssr
 
 # Supabase CLI local state
 supabase/.temp/
+
+# Local snapshot of live data - never commit (contains real business + auth data)
+.local-dump/
