@@ -24,11 +24,13 @@ import EmailConfirmation from "@/pages/EmailConfirmation";
 import NotFound from "./pages/NotFound";
 
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
+import { ThemeProvider } from "next-themes";
 
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
+  <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+    <QueryClientProvider client={queryClient}>
     <ErrorBoundary>
       <AuthProvider>
         <CompanyProvider>
@@ -61,7 +63,8 @@ const App = () => (
         </CompanyProvider>
       </AuthProvider>
     </ErrorBoundary>
-  </QueryClientProvider>
+    </QueryClientProvider>
+  </ThemeProvider>
 );
 
 export default App;

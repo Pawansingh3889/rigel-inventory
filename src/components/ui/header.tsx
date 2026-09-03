@@ -4,6 +4,7 @@ import { Search, User, LogOut } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useBusinessAuth } from '@/hooks/useBusinessAuth';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 interface HeaderProps {
   title?: string;
@@ -20,7 +21,7 @@ export const Header: React.FC<HeaderProps> = ({
   showSearch = true,
   showWelcome = false
 }) => {
-  const { user, profile, signOut } = useAuth();
+  const { user, profile, company, signOut } = useAuth();
   const { businessUser } = useBusinessAuth();
   const isMobile = useIsMobile();
 
@@ -54,15 +55,17 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           {/* Center Section - Company Badge (Hidden on mobile) */}
-          {!isMobile && (
+          {!isMobile && company && (
             <div className="flex-shrink-0 mx-8">
               <div className="bg-background/20 backdrop-blur border border-border/30 rounded-lg px-3 py-2">
                 <div className="text-xs text-foreground/80 font-medium">
-                  Company: ACME Corp
+                  {company.name}
                 </div>
-                <div className="text-xs text-muted-foreground">
-                  ID: 12345
-                </div>
+                {company.business_ref_no && (
+                  <div className="text-xs text-muted-foreground">
+                    {company.business_ref_no}
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -70,6 +73,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Right Section - Actions */}
           <div className="flex items-center gap-2 md:gap-3">
             {actions}
+            <ThemeToggle />
             
             {user ? (
               <Button
